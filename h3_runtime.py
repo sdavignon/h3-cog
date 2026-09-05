@@ -128,6 +128,7 @@ class H3Runtime:
         return_metrics: bool = False,
     ) -> Path | GenerationResult:
         total_started = time.monotonic()
+        ai_content_id = f"h3-{uuid.uuid4().hex}"
         validate_inputs(first_frame=first_frame, last_frame=last_frame, loop=loop, steps=steps, seed=seed)
         frames = aligned_frames(duration)
         width, height = dimensions(aspect_ratio, size)
@@ -176,7 +177,13 @@ class H3Runtime:
                     raw = self._history_output(entry)
                     sample_seconds = time.monotonic() - sample_started
                     encode_started = time.monotonic()
-                    output = encode_video(raw, output_codec, encode_quality, include_audio)
+                    output = encode_video(
+                        raw,
+                        output_codec,
+                        encode_quality,
+                        include_audio,
+                        ai_content_id=ai_content_id,
+                    )
                     encode_seconds = time.monotonic() - encode_started
                     total_seconds = time.monotonic() - total_started
                     print(
@@ -189,6 +196,9 @@ class H3Runtime:
                         return output
                     metrics = {
                         "schema_version": 1,
+                        "ai_generated": True,
+                        "ai_content_id": ai_content_id,
+                        "ai_disclosure": "AI GENERATED | MINIMAX H3",
                         "total_seconds": round(total_seconds, 3),
                         "generation_seconds": round(sample_seconds, 3),
                         "encode_seconds": round(encode_seconds, 3),

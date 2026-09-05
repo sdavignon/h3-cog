@@ -5,6 +5,7 @@ from __future__ import annotations
 import shutil
 import subprocess
 import tempfile
+import uuid
 from pathlib import Path
 
 
@@ -42,12 +43,29 @@ def encode_profiles(codec: str, quality: int, encoders: set[str]) -> tuple[str, 
     return "mp4", profiles
 
 
-def encode_video(source: Path, codec: str, quality: int, include_audio: bool) -> Path:
+def encode_video(
+    source: Path,
+    codec: str,
+    quality: int,
+    include_audio: bool,
+    *,
+    ai_content_id: str | None = None,
+) -> Path:
     extension, profiles = encode_profiles(codec, quality, available_encoders())
     output = Path(tempfile.mkdtemp(prefix="h3-output-")) / f"video.{extension}"
+    ai_content_id = ai_content_id or f"h3-{uuid.uuid4().hex}"
+    disclosure = "AI GENERATED | MINIMAX H3"
+    video_filter = (
+        "drawbox=x=0:y=ih-48:w=iw:h=48:color=black@0.55:t=fill,"
+        f"drawtext=text='{disclosure}':x=w-tw-18:y=h-th-14:fontcolor=white:fontsize=20"
+    )
+    machine_notice = f"AI-generated; model=MiniMax H3; content_id={ai_content_id}"
     last_error = ""
     for profile in profiles:
-        command = ["ffmpeg", "-y", "-hide_banner", "-loglevel", "error", "-i", str(source), "-map", "0:v:0"]
+        command = [
+            "ffmpeg", "-y", "-hide_banner", "-loglevel", "error",
+            "-i", str(source), "-map", "0:v:0", "-vf", video_filter,
+        ]
         if include_audio:
             command += ["-map", "0:a?"]
         command += profile
@@ -55,6 +73,7 @@ def encode_video(source: Path, codec: str, quality: int, include_audio: bool) ->
             command += ["-c:a", "libopus" if extension == "webm" else "aac", "-b:a", "160k"]
         else:
             command += ["-an"]
+        command += ["-metadata", "title=AI-generated video", "-metadata", f"comment={machine_notice}"]
         if extension == "mp4":
             command += ["-movflags", "+faststart"]
         command.append(str(output))

@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-import base64
 import ipaddress
 import os
+import shutil
 import socket
 import tempfile
 import urllib.parse
@@ -13,8 +13,9 @@ from pathlib import Path
 
 import runpod
 
+from h3_compliance import enforce_moderation
 from h3_runtime import H3Runtime
-from h3_serverless import frame_url
+from h3_serverless import deliver_video, frame_url
 from h3_tuning import authorize_tuning
 
 _runtime = None
@@ -60,6 +61,8 @@ def _download_image(url: str | None) -> Path | None:
 def handler(event):
     values = event.get("input") or {}
     first = last = None
+    generated = None
+    moderation = None
     try:
         cache = authorize_tuning(values.get("_tuning"), values.get("_tuning_signature"))
         # The public Cog schema uses first_frame/last_frame. Keep the explicit
@@ -67,7 +70,8 @@ def handler(event):
         # accept the same JSON request shape.
         first = _download_image(frame_url(values, "first_frame"))
         last = _download_image(frame_url(values, "last_frame"))
-        output = _get_runtime().generate(
+        moderation = enforce_moderation(values, first, last)
+        generated = _get_runtime().generate(
             prompt=values.get("prompt", ""),
             first_frame=first,
             last_frame=last,
@@ -84,11 +88,16 @@ def handler(event):
             cache=cache,
             return_metrics=True,
         )
-        data = base64.b64encode(output.path.read_bytes()).decode()
-        content_type = "video/webm" if output.path.suffix == ".webm" else "video/mp4"
         return {
-            "outputs": [{"filename": output.path.name, "data": data, "content_type": content_type}],
-            "metrics": output.metrics,
+            "outputs": [
+                deliver_video(
+                    generated.path,
+                    values,
+                    job_id=event.get("id") or event.get("jobId"),
+                    ai_content_id=generated.metrics.get("ai_content_id"),
+                )
+            ],
+            "metrics": {**generated.metrics, "moderation": moderation},
         }
     except Exception as exc:
         return {"error": str(exc)}
@@ -96,6 +105,8 @@ def handler(event):
         for path in (first, last):
             if path:
                 path.unlink(missing_ok=True)
+        if generated:
+            shutil.rmtree(generated.path.parent, ignore_errors=True)
 
 
 if __name__ == "__main__":

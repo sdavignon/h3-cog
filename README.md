@@ -141,10 +141,25 @@ python -u /src/rp_handler.py
 
 The handler accepts the Cog-compatible `first_frame` and `last_frame` HTTPS
 inputs as well as the explicit `first_frame_url` and `last_frame_url` aliases.
-It rejects private/reserved network targets, caps each image at 32MiB, and
-returns a bounded base64 media output compatible with app.nz's Cog serverless
-shim. Set minimum workers to zero. A persistent network volume avoids
-re-downloading the 42.5GB model on cold workers.
+It rejects private/reserved network targets and caps each image at 32MiB. Every
+request must include a pseudonymous `user_id` and affirmative copyright,
+likeness, terms, and no-training attestations. The worker sends the exact prompt
+and moderation-size source frames to the configured HTTPS moderation service
+under HMAC authentication. Generation fails closed if the service, secret,
+attestations, or authenticated allow decision is missing.
+
+Every delivered video has a visible `AI GENERATED | MINIMAX H3` overlay, an
+embedded machine-readable model/content identifier, and a JSON sidecar tied to
+the output SHA-256 when volume delivery is used.
+
+When `/runpod-volume` is mounted, output defaults to
+`/runpod-volume/outputs/<job-id>/video.*` and the response contains its path,
+size, and SHA-256 rather than an oversized base64 payload. Explicit
+`output_delivery=inline` remains available for videos no larger than 7MiB.
+RunPod network-volume S3 access does not support presigned URLs, so a separate
+authenticated retrieval layer is required before this path is exposed to a
+browser client. Set minimum workers to zero. A persistent network volume also
+avoids re-downloading the 42.5GB model on cold workers.
 
 ### Authenticated acceleration sweeps
 

@@ -37,7 +37,8 @@ def license_accepted() -> bool:
 
 def _manifest() -> dict[str, dict]:
     url = f"{R2_BASE.rstrip('/')}/{REPO}/manifest.json"
-    with urllib.request.urlopen(url, timeout=30) as response:
+    request = urllib.request.Request(url, headers={"User-Agent": "appnz-h3-cog/0.1"})
+    with urllib.request.urlopen(request, timeout=30) as response:
         entries = json.loads(response.read())
     if isinstance(entries, list):
         entries = {entry["path"]: entry for entry in entries}

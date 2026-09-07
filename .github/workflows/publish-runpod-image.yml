@@ -56,4 +56,3 @@ jobs:
 
       - name: Record immutable image
         run: echo "ghcr.io/sdavignon/h3-cog@${{ steps.image.outputs.digest }}" >> "$GITHUB_STEP_SUMMARY"
-

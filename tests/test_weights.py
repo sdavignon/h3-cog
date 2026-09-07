@@ -1,11 +1,43 @@
 import hashlib
 import json
+import sys
 import threading
+import types
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 import pytest
 
+if sys.platform == "win32":
+    sys.modules.setdefault(
+        "fcntl",
+        types.SimpleNamespace(LOCK_EX=1, flock=lambda *_: None),
+    )
+
 import weights
+
+
+def test_manifest_uses_project_user_agent(monkeypatch):
+    seen = {}
+
+    class Response:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_):
+            return None
+
+        def read(self):
+            return b"{}"
+
+    def urlopen(request, timeout):
+        seen["user_agent"] = request.get_header("User-agent")
+        seen["timeout"] = timeout
+        return Response()
+
+    monkeypatch.setattr(weights.urllib.request, "urlopen", urlopen)
+
+    assert weights._manifest() == {}
+    assert seen == {"user_agent": "appnz-h3-cog/0.1", "timeout": 30}
 
 
 def test_license_acceptance_is_explicit(monkeypatch):

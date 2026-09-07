@@ -13,7 +13,7 @@ def test_generation_metrics_cover_output_identity_and_lossless_default(tmp_path,
     monkeypatch.setattr(runtime, "_stage_image", lambda path, label: None)
     monkeypatch.setattr(runtime, "_history_output", lambda entry: raw)
     monkeypatch.setattr(h3_runtime.time, "sleep", lambda seconds: None)
-    monkeypatch.setattr(h3_runtime, "encode_video", lambda *args: encoded)
+    monkeypatch.setattr(h3_runtime, "encode_video", lambda *args, **kwargs: encoded)
 
     def fake_json_request(path, payload=None, timeout=60):
         if path == "/prompt":

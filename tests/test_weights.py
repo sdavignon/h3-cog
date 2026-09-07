@@ -1,17 +1,9 @@
 import hashlib
 import json
-import sys
 import threading
-import types
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 import pytest
-
-if sys.platform == "win32":
-    sys.modules.setdefault(
-        "fcntl",
-        types.SimpleNamespace(LOCK_EX=1, flock=lambda *_: None),
-    )
 
 import weights
 

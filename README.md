@@ -139,9 +139,11 @@ Build and push the same Cog image, then override the container command:
 python -u /src/rp_handler.py
 ```
 
-The handler accepts the Cog-compatible `first_frame` and `last_frame` HTTPS
-inputs as well as the explicit `first_frame_url` and `last_frame_url` aliases.
-It rejects private/reserved network targets and caps each image at 32MiB. Every
+The handler accepts the Cog-compatible `first_frame` and `last_frame` inputs as
+public HTTPS URLs or base64 PNG/JPEG/WebP data URLs, plus the explicit
+`first_frame_url` and `last_frame_url` aliases. It rejects private/reserved
+network targets and caps each image at 32MiB. Data URLs make a single portable
+RunPod request self-contained without adding public asset hosting. Every
 request must include a pseudonymous `user_id` and affirmative copyright,
 likeness, terms, and no-training attestations. The worker sends the exact prompt
 and moderation-size source frames to the configured HTTPS moderation service

@@ -15,13 +15,10 @@ import runpod
 
 from h3_compliance import enforce_moderation
 from h3_runtime import H3Runtime
-from h3_serverless import deliver_video, frame_url
+from h3_serverless import MAX_IMAGE_BYTES, decode_image_data_url, deliver_video, frame_url
 from h3_tuning import authorize_tuning
 
 _runtime = None
-MAX_IMAGE_BYTES = 32 * 1024 * 1024
-
-
 def _get_runtime() -> H3Runtime:
     global _runtime
     if _runtime is None:
@@ -42,6 +39,12 @@ def _public_https(url: str) -> None:
 def _download_image(url: str | None) -> Path | None:
     if not url:
         return None
+    if url.startswith("data:"):
+        data, suffix = decode_image_data_url(url)
+        fd, filename = tempfile.mkstemp(prefix="h3-input-", suffix=suffix)
+        with os.fdopen(fd, "wb") as handle:
+            handle.write(data)
+        return Path(filename)
     _public_https(url)
     request = urllib.request.Request(url, headers={"User-Agent": "appnz-h3-cog/0.1"})
     with urllib.request.urlopen(request, timeout=120) as response:

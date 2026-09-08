@@ -65,5 +65,15 @@
       "aspect_ratio": "21:9", "size": "balanced", "duration": 5, "steps": 20,
       "seed": 31007, "include_audio": true, "output_codec": "webm-av1"
     }
+  },
+  {
+    "id": "wild-lines-pollinator-loop",
+    "mode": "first-last-loop",
+    "requires": ["first_frame"],
+    "input": {
+      "prompt": "Locked illustrated composition using the supplied owned Wild Lines keyframe: Milo, Dot, Zip, and Rook hold their exact poses and stay precisely on-model. A light breeze gently sways only the flowers and a few leaves; subtle circular ripples cross the small water basin; one tiny bee traces a short loop and returns to its starting point. No speaking, no mouth movement, no facial or wardrobe changes, no camera movement, no zoom, no new objects, and no cuts. Preserve the supplied artwork and existing lettering. Finish on exactly the opening composition for a seamless loop. Family-friendly content only. No text, logos, unauthorized likenesses, or copyrighted characters.",
+      "aspect_ratio": "16:9", "size": "preview", "duration": 4, "steps": 12,
+      "seed": 19760824, "loop": true, "include_audio": false, "output_codec": "webm-av1"
+    }
   }
 ]

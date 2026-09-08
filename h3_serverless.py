@@ -12,11 +12,43 @@ import uuid
 from pathlib import Path
 
 MAX_INLINE_BYTES = 7 * 1024 * 1024
+MAX_IMAGE_BYTES = 32 * 1024 * 1024
+_IMAGE_DATA_URL = re.compile(
+    r"^data:(image/(?:png|jpeg|webp));base64,([A-Za-z0-9+/=]+)$",
+    re.IGNORECASE,
+)
+_IMAGE_SUFFIXES = {
+    "image/png": ".png",
+    "image/jpeg": ".jpg",
+    "image/webp": ".webp",
+}
 
 
 def frame_url(values: dict, name: str) -> str | None:
     """Prefer the public Cog field while retaining the direct-RunPod alias."""
     return values.get(name) or values.get(f"{name}_url")
+
+
+def decode_image_data_url(value: str) -> tuple[bytes, str]:
+    """Decode a bounded PNG/JPEG/WebP data URL for direct RunPod callers."""
+    match = _IMAGE_DATA_URL.fullmatch(value.strip())
+    if not match:
+        raise ValueError("image data URLs must be base64 PNG, JPEG, or WebP")
+    media_type = match.group(1).lower()
+    try:
+        data = base64.b64decode(match.group(2), validate=True)
+    except ValueError as exc:
+        raise ValueError("image data URL contains invalid base64") from exc
+    if len(data) > MAX_IMAGE_BYTES:
+        raise ValueError("image exceeds 32 MiB")
+    signatures = {
+        "image/png": data.startswith(b"\x89PNG\r\n\x1a\n"),
+        "image/jpeg": data.startswith(b"\xff\xd8\xff"),
+        "image/webp": len(data) >= 12 and data[:4] == b"RIFF" and data[8:12] == b"WEBP",
+    }
+    if not signatures[media_type]:
+        raise ValueError("image data does not match its declared media type")
+    return data, _IMAGE_SUFFIXES[media_type]
 
 
 def _safe_job_id(value: object) -> str:

@@ -1,8 +1,9 @@
+import base64
 from pathlib import Path
 
 import pytest
 
-from h3_serverless import MAX_INLINE_BYTES, deliver_video, frame_url
+from h3_serverless import MAX_INLINE_BYTES, decode_image_data_url, deliver_video, frame_url
 
 
 def test_frame_url_keeps_cog_and_runpod_inputs_in_parity():
@@ -16,6 +17,26 @@ def test_frame_url_keeps_cog_and_runpod_inputs_in_parity():
         "last_frame",
     ) == "https://cdn.example/cog-last.png"
     assert frame_url({}, "first_frame") is None
+
+
+def test_decode_image_data_url_accepts_matching_png():
+    png = b"\x89PNG\r\n\x1a\n" + b"test-payload"
+    value = "data:image/png;base64," + base64.b64encode(png).decode("ascii")
+
+    data, suffix = decode_image_data_url(value)
+
+    assert data == png
+    assert suffix == ".png"
+
+
+def test_decode_image_data_url_rejects_unsupported_or_mismatched_images():
+    gif = "data:image/gif;base64," + base64.b64encode(b"GIF89a").decode("ascii")
+    fake_png = "data:image/png;base64," + base64.b64encode(b"not-png").decode("ascii")
+
+    with pytest.raises(ValueError, match="PNG, JPEG, or WebP"):
+        decode_image_data_url(gif)
+    with pytest.raises(ValueError, match="does not match"):
+        decode_image_data_url(fake_png)
 
 
 def test_deliver_video_defaults_to_volume_when_mounted(tmp_path: Path):

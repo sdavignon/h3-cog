@@ -10,6 +10,7 @@ def test_text_workflow_has_official_h3_sampling_path():
     assert graph["8"]["inputs"]["sampler_name"] == "res_multistep"
     assert graph["9"]["inputs"] == {"model": ["1", 0], "scheduler": "simple", "steps": 20, "denoise": 1.0}
     assert graph["13"]["inputs"]["audio"] == ["12", 0]
+    assert graph["14"]["inputs"]["codec"] == "auto"
 
 
 def test_first_and_last_frames_are_optional_load_nodes():

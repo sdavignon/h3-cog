@@ -109,7 +109,11 @@ def build_workflow(
                 "video": ["13", 0],
                 "filename_prefix": f"h3/raw-{uuid.uuid4().hex}",
                 "format": "mp4",
-                "codec": {"codec": "h264", "encoding": {"encoding": "re-encode", "crf": 17.0}},
+                # ComfyUI's prompt API accepts the DynamicCombo's selected
+                # option as a scalar and normalizes it for SaveVideo.execute.
+                # Passing the UI's nested object shape causes this input to be
+                # dropped and SaveVideo.execute to receive no codec argument.
+                "codec": "auto",
             },
         },
     }

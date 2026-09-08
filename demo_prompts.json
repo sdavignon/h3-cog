@@ -75,5 +75,55 @@
       "aspect_ratio": "16:9", "size": "preview", "duration": 4, "steps": 12,
       "seed": 19760824, "loop": true, "include_audio": false, "output_codec": "webm-av1"
     }
+  },
+  {
+    "id": "wild-lines-milo-wave-loop",
+    "mode": "first-last-loop",
+    "requires": ["first_frame"],
+    "input": {
+      "prompt": "Locked Wild Lines character-introduction card using the supplied owned keyframe. Keep Milo exactly on-model and preserve the existing MILO lettering. Milo's raised hand gives one small friendly wave, the blue beanie pom-pom bobs once, and the tools catch one subtle glint; his body, feet, face, mouth, clothing, title, and camera remain locked. Do not add new text or objects. Return precisely to the opening composition for a seamless loop. Family-friendly content only. No text, logos, unauthorized likenesses, or copyrighted characters.",
+      "aspect_ratio": "16:9", "size": "preview", "duration": 4, "steps": 12,
+      "seed": 19760825, "loop": true, "include_audio": false, "output_codec": "webm-av1"
+    }
+  },
+  {
+    "id": "wild-lines-dot-clipboard-loop",
+    "mode": "first-last-loop",
+    "requires": ["first_frame"],
+    "input": {
+      "prompt": "Locked Wild Lines character-introduction card using the supplied owned keyframe. Keep Dot exactly on-model and preserve the existing DOT lettering. One clipboard page corner lifts slightly and settles, the red glasses catch a soft glint, and the yellow scarf tip makes one tiny sway; Dot's pose, hands, face, mouth, clothing, title, and camera remain locked. Do not add new text or objects. Return precisely to the opening composition for a seamless loop. Family-friendly content only. No text, logos, unauthorized likenesses, or copyrighted characters.",
+      "aspect_ratio": "16:9", "size": "preview", "duration": 4, "steps": 12,
+      "seed": 19760826, "loop": true, "include_audio": false, "output_codec": "webm-av1"
+    }
+  },
+  {
+    "id": "wild-lines-rook-whistle-loop",
+    "mode": "first-last-loop",
+    "requires": ["first_frame"],
+    "input": {
+      "prompt": "Locked Wild Lines character-introduction card using the supplied owned keyframe. Keep Rook exactly on-model and preserve the existing ROOK lettering. The extended pointing hand makes one tiny command beat, the green tie sways slightly, and the badge catches one restrained glint; Rook's stance, face, open mouth, uniform, title, and camera remain locked. Do not add new text or objects. Return precisely to the opening composition for a seamless loop. Family-friendly content only. No text, logos, unauthorized likenesses, or copyrighted characters.",
+      "aspect_ratio": "16:9", "size": "preview", "duration": 4, "steps": 12,
+      "seed": 19760827, "loop": true, "include_audio": false, "output_codec": "webm-av1"
+    }
+  },
+  {
+    "id": "wild-lines-zip-hop-loop",
+    "mode": "first-last-loop",
+    "requires": ["first_frame"],
+    "input": {
+      "prompt": "Locked Wild Lines character-introduction card using the supplied owned keyframe. Keep Zip exactly on-model and preserve the existing ZIP lettering. Zip completes one buoyant but very small hop in place, the green backpack bobs once, and the loose red shoelace flicks and settles; the face, mouth, clothing, title, framing, and camera remain locked. Do not add new text or objects. Return precisely to the opening composition for a seamless loop. Family-friendly content only. No text, logos, unauthorized likenesses, or copyrighted characters.",
+      "aspect_ratio": "16:9", "size": "preview", "duration": 4, "steps": 12,
+      "seed": 19760828, "loop": true, "include_audio": false, "output_codec": "webm-av1"
+    }
+  },
+  {
+    "id": "wild-lines-title-vine-loop",
+    "mode": "first-last-loop",
+    "requires": ["first_frame"],
+    "input": {
+      "prompt": "Locked Wild Lines promotional title card using the supplied owned keyframe. Preserve the WILD LINES title lettering exactly. Zip stays precisely on-model while making one small pendulum swing on the vine; two leaves flutter gently and the blue motion lines pulse once. Keep Zip's face, mouth, clothing, vine grip, logo, layout, background, and camera locked. Do not add new text or objects. Return precisely to the opening composition for a seamless loop. Family-friendly content only. No text, logos, unauthorized likenesses, or copyrighted characters.",
+      "aspect_ratio": "16:9", "size": "preview", "duration": 4, "steps": 12,
+      "seed": 19760829, "loop": true, "include_audio": false, "output_codec": "webm-av1"
+    }
   }
 ]
